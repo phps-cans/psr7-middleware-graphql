@@ -17,11 +17,11 @@
         "container-interop/container-interop": "^1.0",
         "thecodingmachine/middleware-list-universal-module": "~1.0",
         "http-interop/http-middleware": "^0.4.1",
-        "zendframework/zend-diactoros": "^1.3.0",
+        "zendframework/zend-diactoros": "^1.3.0"
     },
     "autoload": {
         "psr-4": {
-            "PsCs\\Psr7\\Middleware\\Graphql": "src/"
+            "PsCs\\Psr7\\Middleware\\Graphql\\": "src/"
         }
     }
 }
