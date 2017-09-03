@@ -17,12 +17,19 @@ class DefaultServiceProvider implements ServiceProvider {
     {
         return [
             (WebonyxGraphqlMiddleware::class) => [self::class, 'getMiddleware'],
-            \TheCodingMachine\MiddlewareListServiceProvider::MIDDLEWARES_QUEUE => [self::class, 'updatePriorityQueue']
+            \TheCodingMachine\MiddlewareListServiceProvider::MIDDLEWARES_QUEUE => [self::class, 'updatePriorityQueue'],
+            \GraphQL\Error\Debug::class => [self::class, 'getDebug']
         ]; // By convention
     }
 
-    public static function getMiddleware(Container $container): WebonyxGraphqlMiddleware {
-        return new WebonyxGraphqlMiddleware($container->get(StandardServer::class));
+    public static function getDebug(Container $container, callable $previous = null) {
+        return false;
+    }
+
+    public static function getMiddleware(Container $container, callable $previous = null): WebonyxGraphqlMiddleware {
+        $middleware = new WebonyxGraphqlMiddleware($container->get(StandardServer::class));
+        $middleware->setDebug( $container->get(\GraphQL\Error\Debug::class));
+        return $middleware;
     }
 
     public static function updatePriorityQueue(Container $container, callable $previous = null) : \SplPriorityQueue

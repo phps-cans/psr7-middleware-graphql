@@ -25,6 +25,7 @@ This package provide a [ServiceProvider](https://github.com/container-interop/se
 
 ## using any http-interop compilant Middleware pipe
 
+
 This example is based on [zend-stratigility](https://github.com/zendframework/zend-stratigility) middleware pipe:
 
 ```php
@@ -62,14 +63,22 @@ $schema = new Schema([
                 ]
             ])
         ]);
+$defaultUri = '/graphql'; 
+$debug = false;
 // create the standardServer of webonyx
 $standardServer = new StandardServer(["schema" => $schema]);
 // let instantiate our php server
 $pipe = new MiddlewarePipe();
 // Register the middleware which decode JSON body
 $pipe->pipe(new \Psr7Middlewares\Middleware\Payload());
-// Instantiate and register our middleware
-$pipe->pipe(new WebonyxGraphqlMiddleware($standardServer));
+/* Instantiate and register our middleware
+Params are:
+- $standardServer : webonyx's graphql server: [`StandardServer`](http://webonyx.github.io/graphql-php/executing-queries/#using-server) 
+- $defaultUri = This middleware will be executed for each request matching the default URI and for each request having the content-type set to "application/graphql"
+- $debug = IF false, minimal error will be reported (as specified in [handling error](http://webonyx.github.io/graphql-php/error-handling/). The value of $debug must be the same as specified in [`$debug`](http://webonyx.github.io/graphql-php/error-handling/#debugging-tools)
+
+**/
+$pipe->pipe(new WebonyxGraphqlMiddleware($standardServer, $defaultUri, $debug)); 
 // Add the notFoundHandler
 $pipe->pipe(new NotFoundHandler(new Response()));
 // Instantiate our server
@@ -83,4 +92,4 @@ Feel free to report any issues.
 ## TODO
 
  - Write unit testing
-
+ - Allow formmating errors
