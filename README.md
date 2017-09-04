@@ -1,4 +1,4 @@
-# [PSR 15](https://github.com/http-interop/http-middleware) compilant middleware to handle graphql 
+# [PSR 15](https://github.com/http-interop/http-middleware) compliant middleware to handle graphql 
 This package is currently under development.
 This package use the [official package of graphql's integration](https://github.com/webonyx/graphql-php) to handle Graphql Request.
 
