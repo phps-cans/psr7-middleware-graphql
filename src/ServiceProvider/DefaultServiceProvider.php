@@ -8,19 +8,12 @@ use GraphQL\Type\Schema;
 use GraphQL\Type\Definition\ObjectType;
 
 use Interop\Container\ContainerInterface as Container;
+use Interop\Container\ServiceProviderInterface;
 use TheCodingMachine\MiddlewareOrder;
 use GraphQL\Server\StandardServer;
 use PsCs\Psr7\Middleware\Graphql\WebonyxGraphqlMiddleware;
 
-class DefaultServiceProvider implements ServiceProvider {
- public function getServices()
-    {
-        return [
-            (WebonyxGraphqlMiddleware::class) => [self::class, 'getMiddleware'],
-            \TheCodingMachine\MiddlewareListServiceProvider::MIDDLEWARES_QUEUE => [self::class, 'updatePriorityQueue'],
-            \GraphQL\Error\Debug::class => [self::class, 'getDebug']
-        ]; // By convention
-    }
+class DefaultServiceProvider implements ServiceProviderInterface {
 
     public static function getDebug(Container $container, callable $previous = null) {
         return false;
@@ -41,5 +34,46 @@ class DefaultServiceProvider implements ServiceProvider {
         } else {
             throw new \InvalidArgumentException("Could not find declaration for service '".MiddlewareListServiceProvider::MIDDLEWARES_QUEUE."'.");
         }
+    }
+
+    /**
+     * Returns a list of all container entries registered by this service provider.
+     *
+     * - the key is the entry name
+     * - the value is a callable that will return the entry, aka the **factory**
+     *
+     * Factories have the following signature:
+     *        function(\Psr\Container\ContainerInterface $container)
+     *
+     * @return callable[]
+     */
+    public function getFactories()
+    {
+        return [
+            (WebonyxGraphqlMiddleware::class) => [self::class, 'getMiddleware'],
+            \GraphQL\Error\Debug::class => [self::class, 'getDebug']
+        ];
+    }
+
+    /**
+     * Returns a list of all container entries extended by this service provider.
+     *
+     * - the key is the entry name
+     * - the value is a callable that will return the modified entry
+     *
+     * Callables have the following signature:
+     *        function(Psr\Container\ContainerInterface $container, $previous)
+     *     or function(Psr\Container\ContainerInterface $container, $previous = null)
+     *
+     * About factories parameters:
+     *
+     * - the container (instance of `Psr\Container\ContainerInterface`)
+     * - the entry to be extended. If the entry to be extended does not exist and the parameter is nullable, `null` will be passed.
+     *
+     * @return callable[]
+     */
+    public function getExtensions()
+    {
+        return [\TheCodingMachine\MiddlewareListServiceProvider::MIDDLEWARES_QUEUE => [self::class, 'updatePriorityQueue']];
     }
 }

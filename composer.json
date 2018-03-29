@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": ">=5.5.0",
-        "container-interop/service-provider": "~0.3.0",
+        "container-interop/service-provider": "~0.4.0",
         "container-interop/container-interop": "^1.0",
         "thecodingmachine/middleware-list-universal-module": "~1.0",
         "http-interop/http-middleware": "^0.4.1",
