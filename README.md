@@ -1,30 +1,12 @@
 # [PSR 15](https://github.com/http-interop/http-middleware) compliant middleware to handle graphql 
-This package is currently under development.
-This package use the [official package of graphql's integration](https://github.com/webonyx/graphql-php) to handle Graphql Request.
 
-This middleware is executed if the `content-type` of the request is `application/graphql` or if the configured URL is reached (by default it is /graphql)
-This middleware use the [`StandardServer`](http://webonyx.github.io/graphql-php/executing-queries/#using-server) to handle request. It is free to you to create the schema and the server.
-This middleware expect that JSON has already been decoded (by example with [`Psr7Middlewares\Middleware\Payload`](https://github.com/oscarotero/psr7-middlewares/blob/master/src/Middleware/Payload.php))
+This package uses the [webonyx/graphql-php](https://github.com/webonyx/graphql-php) to handle GraphQL requests.
 
-## Easy use:
+This middleware is executed if the `content-type` of the request is `application/graphql` or if the configured URL is reached (by default it is `/graphql`).
+This middleware consumes a [`StandardServer`](http://webonyx.github.io/graphql-php/executing-queries/#using-server) to handle the request.
+This middleware expects that JSON has already been decoded (for instance with [`Psr7Middlewares\Middleware\Payload`](https://github.com/oscarotero/psr7-middlewares/blob/master/src/Middleware/Payload.php))
 
-To be able to use this package easily we recommend you to use:
-- [ServiceProvider](https://github.com/container-interop/service-provider)
-- [stratigility-harmony](https://github.com/thecodingmachine/stratigility-harmony)
-- [Middleware List](https://github.com/thecodingmachine/middleware-list-universal-module)
-- [Universal payload](https://github.com/phps-cans/psr7-middlewares-payload-universal-module)
-- [Graphql Tools](https://github.com/phps-cans/harmony-graphql-tool)
-
-This way, the zend-stratigility server is ready to use, JSON body are automatically parsed, middleware are piped, the StandardServer and Schema are automatically created.
-## Using ServiceProvider
-
-We recommend to use [stratigility-harmony](https://github.com/thecodingmachine/stratigility-harmony) to automatically configure your stratigility's server.
-
-This package provide a [ServiceProvider](https://github.com/container-interop/service-provider) by default (src/ServiceProvider/DefaultServiceProvider.php). It expect the `StandardServer` to be registered in the container under the name `GraphQL\Server\StandardServer`. If you use [Middleware List](https://github.com/thecodingmachine/middleware-list-universal-module), it update the queue using the constant `MiddlewareOrder::ROUTER_EARLY`.
-
-
-## using any http-interop compilant Middleware pipe
-
+## Sample usage using any PSR-15 compliant Middleware pipe
 
 This example is based on [zend-stratigility](https://github.com/zendframework/zend-stratigility) middleware pipe:
 
@@ -41,6 +23,9 @@ use Psr7Middlewares\Middleware\Payload;
 use Zend\Stratigility\Middleware\NotFoundHandler;
 use Zend\Diactoros\Response;
 use Zend\Stratigility\NoopFinalHandler;
+use Zend\Diactoros\ResponseFactory;
+use Zend\Diactoros\StreamFactory;
+
 
 // Create fields
 $field = FieldDefinition::create([
@@ -67,18 +52,19 @@ $defaultUri = '/graphql';
 $debug = false;
 // create the standardServer of webonyx
 $standardServer = new StandardServer(["schema" => $schema]);
-// let instantiate our php server
+// let's instantiate our php server
 $pipe = new MiddlewarePipe();
 // Register the middleware which decode JSON body
 $pipe->pipe(new \Psr7Middlewares\Middleware\Payload());
 /* Instantiate and register our middleware
 Params are:
-- $standardServer : webonyx's graphql server: [`StandardServer`](http://webonyx.github.io/graphql-php/executing-queries/#using-server) 
+- $standardServer : Webonyx's graphql server: [`StandardServer`](http://webonyx.github.io/graphql-php/executing-queries/#using-server)
+- $responseFactory: A PSR-17 response factory
+- $streamFactory: A PSR-17 stream factory
 - $defaultUri = This middleware will be executed for each request matching the default URI and for each request having the content-type set to "application/graphql"
 - $debug = IF false, minimal error will be reported (as specified in [handling error](http://webonyx.github.io/graphql-php/error-handling/). The value of $debug must be the same as specified in [`$debug`](http://webonyx.github.io/graphql-php/error-handling/#debugging-tools)
-
 **/
-$pipe->pipe(new WebonyxGraphqlMiddleware($standardServer, $defaultUri, $debug)); 
+$pipe->pipe(new WebonyxGraphqlMiddleware($standardServer, new ResponseFactory(), new StreamFactory(), $defaultUri, $debug)); 
 // Add the notFoundHandler
 $pipe->pipe(new NotFoundHandler(new Response()));
 // Instantiate our server
@@ -88,8 +74,3 @@ $server->listen(new NoopFinalHandler());
 ```
 
 Feel free to report any issues.
-
-## TODO
-
- - Write unit testing
- - Allow formmating errors

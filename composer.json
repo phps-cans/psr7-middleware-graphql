@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": ">=7.0",
+        "php": ">=7.1",
         "ext-json": "*",
         "psr/http-message": "^1",
         "psr/http-server-handler": "^1",
@@ -33,8 +33,8 @@
     },
     "scripts": {
         "phpstan": "phpstan analyse src -c phpstan.neon --level=7 --no-progress -vvv",
-        "check": "phpcs --standard=Doctrine src/",
-        "fix": "phpcbf --standard=Doctrine src/"
+        "check": "phpcs --standard=Doctrine src/ tests/",
+        "fix": "phpcbf --standard=Doctrine src/ tests/"
     },
     "autoload": {
         "psr-4": {
