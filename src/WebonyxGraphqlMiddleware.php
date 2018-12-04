@@ -40,7 +40,7 @@ final class WebonyxGraphqlMiddleware implements MiddlewareInterface
     ];
 
     /** @var bool|int */
-    protected $debug = false;
+    private $debug;
     /** @var ResponseFactoryInterface */
     private $responseFactory;
     /** @var StreamFactoryInterface */
@@ -68,15 +68,6 @@ final class WebonyxGraphqlMiddleware implements MiddlewareInterface
         if (! $this->isGraphqlRequest($request)) {
             return $handler->handle($request);
         }
-        /*if (strtoupper($request->getMethod()) === 'GET') {
-            $params              = $request->getQueryParams();
-            $params['variables'] = empty($params['variables']) ? null : $params['variables'];
-            $request             = $request->withQueryParams($params);
-        } else {
-            $params              = $request->getParsedBody();
-            $params['variables'] = empty($params['variables']) ? null : $params['variables'];
-            $request             = $request->withParsedBody($params);
-        }*/
 
         $result = $this->standardServer->executePsrRequest($request);
 
