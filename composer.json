@@ -1,7 +1,7 @@
 {
     "name": "phps-cans/psr7-middleware-graphql",
-    "description": "This package contains a http-interop middleware implementation to handle graphql request",
-    "keywords": ["psr15", "psr7", "middlewares", "middleware", "http-interop", "graphql"],
+    "description": "This package contains a PSR-15 middleware to handle GraphQL requests",
+    "keywords": ["psr15", "psr7", "middlewares", "middleware", "graphql"],
     "homepage": "https://github.com/phps-cans/psr7-middleware-graphql",
     "type": "library",
     "license": "MIT",
@@ -9,21 +9,36 @@
         {
             "name": "Benoit Ngo",
             "email": "ngobenoit@gmail.com"
+        },
+        {
+            "name": "David Negrier",
+            "email": "d.negrier@thecodingmachine.com"
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "container-interop/service-provider": "~0.3.0",
-        "container-interop/container-interop": "^1.0",
-        "thecodingmachine/middleware-list-universal-module": "~1.0",
-        "http-interop/http-middleware": "^0.4.1",
-        "zendframework/zend-diactoros": "^1.3.0",
-        "psr/http-message": "~1.0",
-        "webonyx/graphql-php": "^0.10"
+        "php": ">=7.1",
+        "ext-json": "*",
+        "psr/http-message": "^1",
+        "psr/http-server-handler": "^1",
+        "psr/http-server-middleware": "^1",
+        "psr/http-factory": "^1",
+        "webonyx/graphql-php": "^0.13"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.1",
+        "satooshi/php-coveralls": "^1.0",
+        "phpstan/phpstan": "^0.10.5",
+        "doctrine/coding-standard": "^5",
+        "zendframework/zend-diactoros": "^2"
+    },
+    "scripts": {
+        "phpstan": "phpstan analyse src -c phpstan.neon --level=7 --no-progress -vvv",
+        "check": "phpcs --standard=Doctrine src/ tests/",
+        "fix": "phpcbf --standard=Doctrine src/ tests/"
     },
     "autoload": {
         "psr-4": {
-            "PsCs\\Psr7\\Middleware\\Graphql\\": "src/"
+            "PsCs\\Middleware\\Graphql\\": "src/"
         }
     }
 }
